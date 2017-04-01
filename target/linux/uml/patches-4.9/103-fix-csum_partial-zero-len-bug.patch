@@ -1,0 +1,36 @@
+--- a/arch/x86/um/checksum_32.S
++++ b/arch/x86/um/checksum_32.S
+@@ -51,10 +51,14 @@ unsigned int csum_partial(const unsigned char * buff, int len, unsigned int sum)
+ 	   * alignment for the unrolled loop.
+ 	   */		
+ csum_partial:
++	movl 12(%esp),%eax	# Function arg: unsigned int sum
++	movl 8(%esp),%ecx	# Function arg: int len
++	testl %ecx,%ecx
++	jnz len_not_0
++	ret
++len_not_0:
+ 	pushl %esi
+ 	pushl %ebx
+-	movl 20(%esp),%eax	# Function arg: unsigned int sum
+-	movl 16(%esp),%ecx	# Function arg: int len
+ 	movl 12(%esp),%esi	# Function arg: unsigned char *buff
+ 	testl $2, %esi		# Check alignment.
+ 	jz 2f			# Jump if alignment is ok.
+@@ -121,10 +125,14 @@ csum_partial:
+ /* Version for PentiumII/PPro */
+ 
+ csum_partial:
++	movl 12(%esp),%eax	# Function arg: unsigned int sum
++	movl 8(%esp),%ecx	# Function arg: int len
++	testl %ecx,%ecx
++	jnz len_not_0
++	ret
++len_not_0:
+ 	pushl %esi
+ 	pushl %ebx
+-	movl 20(%esp),%eax	# Function arg: unsigned int sum
+-	movl 16(%esp),%ecx	# Function arg: int len
+ 	movl 12(%esp),%esi	# Function arg:	const unsigned char *buf
+ 
+ 	testl $2, %esi         
